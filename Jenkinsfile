@@ -4,7 +4,8 @@ pipeline{
     stages{
         stage('Git-clone'){
             step{
-                git 'https://github.com/iter-anant-bhardwaj/Flappy-Bird.git'
+                git branch: 'main',
+                url: 'https://github.com/iter-anant-bhardwaj/Flappy-Bird.git'
             }
         }
         stage('Execute'){
