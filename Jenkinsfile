@@ -12,7 +12,7 @@ pipeline{
         stage('Execute'){
             step{
                 bat ''' mvn clean package
-                java -jar target\Maven1-1.0-SNAPSHOT.jar '''
+                java -jar target/Maven1-1.0-SNAPSHOT.jar '''
             }
         }
     }
