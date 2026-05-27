@@ -8,10 +8,15 @@ pipeline{
                 url: 'https://github.com/iter-anant-bhardwaj/Flappy-Bird.git'
             }
         }
-        stage('Execute'){
-            steps{
-                bat ''' mvn clean package
-                java -jar target/Maven1-1.0-SNAPSHOT.jar '''
+        stage('Build') {
+            steps {
+                bat 'mvn clean package'
+            }
+        }
+
+        stage('Run Game') {
+            steps {
+                bat 'java -jar target\\Maven1-1.0-SNAPSHOT.jar'
             }
         }
     }
