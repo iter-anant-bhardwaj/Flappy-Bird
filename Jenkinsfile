@@ -1,22 +1,49 @@
-pipeline{
+pipeline {
     agent any
 
-    stages{
-        stage('Git-clone'){
-            steps{
+    environment {
+        IMAGE_NAME = "flappybird"
+    }
+
+    stages {
+
+        stage('Git Clone') {
+            steps {
                 git branch: 'main',
-                url: 'https://github.com/iter-anant-bhardwaj/Flappy-Bird.git'
+                    url: 'https://github.com/iter-anant-bhardwaj/Flappy-Bird.git'
             }
         }
-        stage('Build') {
+
+        stage('Build Maven Project') {
             steps {
                 bat 'mvn clean package'
             }
         }
 
-        stage('Run Game') {
+        stage('Build Docker Image') {
             steps {
-                bat 'java -jar target\\Maven1-1.0-SNAPSHOT.jar'
+                bat 'docker build -t %IMAGE_NAME%:latest .'
+            }
+        }
+
+        stage('Load Image Into Minikube') {
+            steps {
+                bat 'minikube image load %IMAGE_NAME%:latest'
+            }
+        }
+
+        stage('Deploy To Kubernetes') {
+            steps {
+                bat 'kubectl apply -f deployment.yaml'
+                bat 'kubectl apply -f service.yaml'
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                bat 'kubectl get deployments'
+                bat 'kubectl get pods'
+                bat 'kubectl get svc'
             }
         }
     }

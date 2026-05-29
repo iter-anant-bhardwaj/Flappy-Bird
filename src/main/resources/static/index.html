@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Flappy Bird</title>
+
+<style>
+
+body{
+
+margin:0;
+overflow:hidden;
+background:skyblue;
+
+}
+
+canvas{
+
+display:block;
+margin:auto;
+background:cyan;
+border:2px solid black;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<canvas id="game"
+width="400"
+height="600"
+tabindex="1">
+</canvas>
+
+<script>
+
+const canvas = document.getElementById("game");
+
+canvas.focus();
+
+const ctx = canvas.getContext("2d");
+
+let bird={
+
+x:100,
+y:300,
+radius:18,
+velocity:0
+
+};
+
+const gravity=0.5;
+
+const jump=-8;
+
+let pipes=[];
+
+let score=0;
+
+let gameOver=false;
+
+function createPipe(){
+
+let topHeight=Math.random()*250+50;
+
+pipes.push({
+
+x:400,
+top:topHeight,
+bottom:topHeight+150,
+width:70,
+passed:false
+
+});
+
+}
+
+setInterval(()=>{
+
+if(!gameOver){
+
+createPipe();
+
+}
+
+},2000);
+
+document.addEventListener("keydown",function(e){
+
+if(e.code==="Space"){
+
+e.preventDefault();
+
+if(gameOver){
+
+restart();
+
+}
+else{
+
+bird.velocity=jump;
+
+}
+
+}
+
+});
+
+function restart(){
+
+bird.y=300;
+
+bird.velocity=0;
+
+pipes=[];
+
+score=0;
+
+gameOver=false;
+
+}
+
+function update(){
+
+if(!gameOver){
+
+bird.velocity+=gravity;
+
+bird.y+=bird.velocity;
+
+pipes.forEach(pipe=>{
+
+pipe.x-=3;
+
+if(
+
+bird.x+bird.radius>pipe.x &&
+
+bird.x-bird.radius<pipe.x+pipe.width &&
+
+(
+
+bird.y-bird.radius<pipe.top ||
+
+bird.y+bird.radius>pipe.bottom
+
+)
+
+){
+
+gameOver=true;
+
+}
+
+if(
+
+!pipe.passed &&
+
+pipe.x+pipe.width<bird.x
+
+){
+
+score++;
+
+pipe.passed=true;
+
+}
+
+});
+
+pipes=pipes.filter(
+
+pipe=>pipe.x+pipe.width>0
+
+);
+
+if(
+
+bird.y>600 ||
+
+bird.y<0
+
+){
+
+gameOver=true;
+
+}
+
+}
+
+draw();
+
+requestAnimationFrame(update);
+
+}
+
+function draw(){
+
+ctx.clearRect(
+
+0,
+0,
+400,
+600
+
+);
+
+ctx.fillStyle="yellow";
+
+ctx.beginPath();
+
+ctx.arc(
+
+bird.x,
+bird.y,
+bird.radius,
+0,
+Math.PI*2
+
+);
+
+ctx.fill();
+
+ctx.fillStyle="green";
+
+pipes.forEach(pipe=>{
+
+ctx.fillRect(
+
+pipe.x,
+0,
+pipe.width,
+pipe.top
+
+);
+
+ctx.fillRect(
+
+pipe.x,
+pipe.bottom,
+pipe.width,
+600-pipe.bottom
+
+);
+
+});
+
+ctx.fillStyle="black";
+
+ctx.font="25px Arial";
+
+ctx.fillText(
+
+"Score: "+score,
+20,
+40
+
+);
+
+if(gameOver){
+
+ctx.font="40px Arial";
+
+ctx.fillText(
+
+"Game Over",
+70,
+260
+
+);
+
+ctx.font="20px Arial";
+
+ctx.fillText(
+
+"Press SPACE",
+120,
+310
+
+);
+
+}
+
+}
+
+update();
+
+</script>
+
+</body>
+
+</html>

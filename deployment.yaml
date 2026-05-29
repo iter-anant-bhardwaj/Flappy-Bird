@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: flappybird-deployment
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: flappybird
+
+  template:
+    metadata:
+      labels:
+        app: flappybird
+
+    spec:
+      containers:
+      - name: flappybird
+        image: flappybird:latest
+        imagePullPolicy: Never
+
+        ports:
+        - containerPort: 8080
